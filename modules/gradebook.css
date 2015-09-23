@@ -8,8 +8,13 @@ section {
   max-width: 800px;
 }
 
-div#grades_by_assignment {
+div#grades_by_assignment1 {
   width: 40%;
+  float: left;
+}
+
+div#grades_by_assignment2 {
+  margin-left: 50%;
 }
 
 h1 {

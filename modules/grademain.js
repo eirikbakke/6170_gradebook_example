@@ -19,6 +19,7 @@ $(function() {
   gradebook.setGrade("Catherine", "JavaScript Warm-Up", 16);
   gradebook.setGrade("Catherine", "Fritter Part 1", 90);
 
-  GradeWidget_install($("#grades_by_assignment"), gradebook);
+  GradeWidget_install($("#grades_by_assignment1"), gradebook);
+  GradeWidget_install($("#grades_by_assignment2"), gradebook);
 })
 
