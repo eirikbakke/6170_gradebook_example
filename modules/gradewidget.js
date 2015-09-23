@@ -6,16 +6,40 @@
  *        install the GradeWidget in.
  * @param {Gradebook} gradebook the Gradebook object to use as a model for the
  *        data being displayed and edited by this GradeWidget.
+ * @param {boolean} byAssignment if true, show grades by assignment, otherwise,
+ *        show them by student.
  */
 GradeWidget_install =
-    function(domContainer, gradebook)
+    function(domContainer, gradebook, byAssignment)
 {
+  var getHeading = function() {
+    return byAssignment ? "Grades by Assignment" : "Grades by Student";
+  }
+  var getDropdownChoices = function() {
+    return byAssignment ? gradebook.getAssignments() : gradebook.getStudents();
+  }
+  var getRowKeys = function() {
+    return byAssignment ? gradebook.getStudents() : gradebook.getAssignments();
+  }
+  var getGrade = function(dropdownValue, rowKey) {
+    return byAssignment
+      ? gradebook.getGrade(rowKey, dropdownValue)
+      : gradebook.getGrade(dropdownValue, rowKey);
+  }
+  var setGrade = function(dropdownValue, rowKey, newGrade) {
+    if (byAssignment) {
+      gradebook.setGrade(rowKey, dropdownValue, parseInt(newGrade));
+    } else {
+      gradebook.setGrade(dropdownValue, rowKey, parseInt(newGrade));
+    }
+  }
+
   var dropdownElm = $("<select>");
   var tableElm = $("<table>");
-  $.each(gradebook.getAssignments(), function (index, value) {
+  $.each(getDropdownChoices(), function (index, value) {
     dropdownElm.append($("<option>", { "value": value, text: value }));
   });
-  domContainer.append($("<h2>Grades by Assignment</h2>"));
+  domContainer.append($("<h2>", { text: getHeading() }));
   domContainer.append(dropdownElm);
   domContainer.append(tableElm);
   var gradeInputElm = $("<input type='number'>");
@@ -27,7 +51,7 @@ GradeWidget_install =
       var assignment = dropdownElm.val();
       var gradeInput = gradeInputElm.val();
       if (gradeInput.length > 0) {
-        gradebook.setGrade(student, assignment, parseInt(gradeInput));
+        setGrade(assignment, student, parseInt(gradeInput));
       }
       rebuild_table();
     }
@@ -51,8 +75,8 @@ GradeWidget_install =
     var dropdownValue = dropdownElm.val();
     var total = 0, N = 0;
     if (dropdownValue.length > 0) {
-      $.each(gradebook.getStudents(), function (index, rowKey) {
-        var grade = gradebook.getGrade(rowKey, dropdownValue);
+      $.each(getRowKeys(), function (index, rowKey) {
+        var grade = getGrade(dropdownValue, rowKey);
         var tableRow = $("<tr>");
         tableRow.append($("<td>", { text: rowKey }));
         var gradeCell = $("<td>");
