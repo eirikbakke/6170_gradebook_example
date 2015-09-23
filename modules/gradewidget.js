@@ -89,5 +89,11 @@ GradeWidget_install =
 
   rebuild_table();
   dropdownElm.change(rebuild_table);
+
+  gradebook.subscribe(function() {
+    acceptCurrentEdit();
+    rebuild_table();
+    // Ideally we should also update the dropdown here.
+  });
 }
 

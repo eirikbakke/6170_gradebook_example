@@ -13,6 +13,21 @@ Gradebook = function() {
   // Keys are assignments, values are maps from student names to grades
   var assignments = {};
 
+  var subscribers = [];
+  /**
+   * Subscribe to changes to this object.
+   * @param subscriber a function that is called whenever the Gradebook is
+            changed
+   */
+  that.subscribe = function(subscriber) {
+    subscribers.push(subscriber);
+  };
+  var publishChanges = function() {
+    var i;
+    for (i = 0; i < subscribers.length; i++)
+      subscribers[i]();
+  };
+
   var checkStringArgument = function(obj) {
     if ($.type(obj) !== "string" || obj.length === 0)
       throw new Error("Expected a non-empty string argument");
@@ -32,6 +47,7 @@ Gradebook = function() {
   that.addStudent = function(student) {
     checkStringArgument(student);
     students[student] = true;
+    publishChanges();
   };
 
   /**
@@ -42,6 +58,7 @@ Gradebook = function() {
   that.addAssignment = function(assignment) {
     checkStringArgument(assignment);
     assignments[assignment] = {};
+    publishChanges();
   };
 
   /**
@@ -57,6 +74,7 @@ Gradebook = function() {
     if ($.type(grade) !== "number" || !isFinite(grade))
       throw new Error("Expected a numeric grade");
     assignments[assignment][student] = grade;
+    publishChanges();
   };
 
   /**
