@@ -8,20 +8,40 @@ Gradebook = function() {
   // Keys are assignments, values are maps from student names to grades
   var assignments = {};
 
+  var checkStringArgument = function(obj) {
+    if ($.type(obj) !== "string" || obj.length === 0)
+      throw new Error("Expected a non-empty string argument");
+  };
+
+  var checkKey = function(map, key) {
+    checkStringArgument(key);
+    if (!map.hasOwnProperty(key))
+      throw new Error("No entry " + key);
+  };
+
   that.addStudent = function(student) {
+    checkStringArgument(student);
     students[student] = true;
   };
 
   that.addAssignment = function(assignment) {
+    checkStringArgument(assignment);
     assignments[assignment] = {};
   };
 
   that.setGrade = function(student, assignment, grade) {
+    checkKey(students, student);
+    checkKey(assignments, assignment);
+    if ($.type(grade) !== "number" || !isFinite(grade))
+      throw new Error("Expected a numeric grade");
     assignments[assignment][student] = grade;
   };
 
   that.getGrade = function(student, assignment) {
-    return assignments[assignment][student] || 0;
+    checkKey(students, student);
+    checkKey(assignments, assignment);
+    var ret = assignments[assignment][student];
+    return ret === undefined ? 0 : ret;
   };
 
   that.getStudents = function() {
@@ -32,6 +52,7 @@ Gradebook = function() {
     return Object.keys(assignments);
   }
 
+  Object.freeze(that);
   return that;
 }
 
