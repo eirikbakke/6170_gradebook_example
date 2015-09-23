@@ -1,3 +1,8 @@
+/**
+ * Create a Gradebook object. A Gradebook contains grades by students and
+ * assignments.
+ * @constructor
+ */
 Gradebook = function() {
   /* 6.170's prefered constructor idiom (does not require use of the "new"
   keyword). */
@@ -19,16 +24,33 @@ Gradebook = function() {
       throw new Error("No entry " + key);
   };
 
+  /**
+   * Add a student.
+   *
+   * @param {String} student the name of the student
+   */
   that.addStudent = function(student) {
     checkStringArgument(student);
     students[student] = true;
   };
 
+  /**
+   * Add an assignment.
+   *
+   * @param {String} assignment the name of the assignment
+   */
   that.addAssignment = function(assignment) {
     checkStringArgument(assignment);
     assignments[assignment] = {};
   };
 
+  /**
+   * Set the grade of a student for one assignment.
+   *
+   * @param {String} student the name of the student
+   * @param {String} assignment the name of the assignment
+   * @param {Number} grade the grade to set
+   */
   that.setGrade = function(student, assignment, grade) {
     checkKey(students, student);
     checkKey(assignments, assignment);
@@ -37,6 +59,11 @@ Gradebook = function() {
     assignments[assignment][student] = grade;
   };
 
+  /**
+   * Get the grade of a student for one assignment.
+   * @param {String} student the name of the student
+   * @param {String} assignment the name of the assignment
+   */
   that.getGrade = function(student, assignment) {
     checkKey(students, student);
     checkKey(assignments, assignment);
@@ -44,10 +71,16 @@ Gradebook = function() {
     return ret === undefined ? 0 : ret;
   };
 
+  /**
+   * Get an array of students.
+   */
   that.getStudents = function() {
     return Object.keys(students);
   }
 
+  /**
+   * Get an array of assignments.
+   */
   that.getAssignments = function() {
     return Object.keys(assignments);
   }
